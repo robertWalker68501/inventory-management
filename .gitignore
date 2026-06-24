@@ -42,3 +42,4 @@ next-env.d.ts
 
 /app/generated/prisma
 Warehouse_Inventory_SaaS_Plan.md
+.cursor/rules
