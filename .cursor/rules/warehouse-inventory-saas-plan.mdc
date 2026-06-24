@@ -1,0 +1,306 @@
+---
+description: SaaS multi-tenant warehouse inventory management app plan — tech stack, architecture, features, and development milestones
+alwaysApply: true
+---
+
+# SaaS Multi-Tenant Warehouse Inventory Management App Plan
+
+## Tech Stack
+
+Use:
+
+- Next.js 16 with App Router
+- TypeScript
+- ESLint
+- Prisma
+- Neon Postgres
+- Tailwind CSS v4
+- Shadcn UI
+- Zod
+- React Hook Form
+- @hookform/resolvers
+- Better Auth
+
+Use Next.js App Router, TypeScript, Tailwind, and ESLint as the project foundation.
+
+---
+
+# Application Goal
+
+Build a SaaS multi-tenant warehouse inventory management platform where companies can manage warehouses, inventory items, stock levels, receiving, picking, shipping, users, roles, and activity logs.
+
+Each tenant/company must have isolated data.
+
+---
+
+# Core Features
+
+## 1. Authentication
+
+Use Better Auth for:
+
+- Sign up
+- Sign in
+- Sign out
+- Sessions
+- Protected routes
+- Organization/tenant-aware access
+- Role-based authorization
+
+Suggested roles:
+
+```ts
+OWNER
+ADMIN
+MANAGER
+STAFF
+VIEWER
+```
+
+## 2. Multi-Tenant Structure
+
+Every major business record should belong to a `tenantId`.
+
+Core tenant model:
+
+- Tenant
+- User
+- Membership
+- Warehouse
+- InventoryItem
+- StockLocation
+- InventoryStock
+- Supplier
+- PurchaseOrder
+- Receiving
+- Shipment
+- Order
+- ActivityLog
+
+Users can belong to one or more tenants through Membership.
+
+## 3. Main App Sections
+
+### Public Pages
+
+- Landing page
+- Pricing page
+- Features page
+- Sign in
+- Sign up
+
+### Protected Dashboard
+
+- Overview dashboard
+- Warehouses
+- Inventory
+- Stock levels
+- Receiving
+- Orders
+- Shipments
+- Suppliers
+- Reports
+- Team members
+- Settings
+
+# Suggested Folder Structure
+
+```txt
+app/
+  (marketing)/
+  (auth)/
+  (dashboard)/
+  api/
+components/
+lib/
+prisma/
+```
+
+# Database Models
+
+## Key Models
+
+```prisma
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+```
+
+Every tenant-owned model should include:
+
+```prisma
+tenantId String
+tenant   Tenant @relation(fields: [tenantId], references: [id])
+```
+
+# Inventory Features
+
+## Inventory Items
+
+- SKU
+- Name
+- Description
+- Category
+- Unit of measure
+- Reorder point
+- Current stock
+- Warehouse location
+- Barcode
+- Status
+
+## Stock Tracking
+
+- Quantity on hand
+- Quantity reserved
+- Quantity available
+- Quantity incoming
+- Stock adjustments
+- Movement history
+
+Formula:
+
+```ts
+available = onHand - reserved
+```
+
+# Forms and Validation
+
+Use:
+
+- React Hook Form
+- Zod
+- @hookform/resolvers
+- Shadcn form components
+
+Example:
+
+```ts
+import { z } from "zod";
+
+export const inventoryItemSchema = z.object({
+  sku: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  reorderPoint: z.coerce.number().min(0),
+});
+```
+
+# Dashboard UI
+
+Use Shadcn components for:
+
+- Sidebar
+- Cards
+- Tables
+- Forms
+- Dialogs
+- Dropdown menus
+- Badges
+- Tabs
+- Toasts
+
+Dashboard cards:
+
+- Total inventory value
+- Low stock items
+- Pending receiving
+- Open orders
+- Shipments today
+- Active warehouses
+
+# Permissions
+
+Suggested permission rules:
+
+- OWNER: full access
+- ADMIN: full access except ownership/billing
+- MANAGER: operations access
+- STAFF: daily operations
+- VIEWER: read only
+
+# Development Milestones
+
+## Phase 1 — Project Setup
+
+- Create Next.js app
+- Configure Tailwind v4
+- Configure Shadcn
+- Configure ESLint
+
+## Phase 2 — Database
+
+- Set up Neon
+- Configure Prisma
+- Create schema
+- Seed data
+
+## Phase 3 — Auth
+
+- Configure Better Auth
+- Protected routes
+- Tenant-aware sessions
+
+## Phase 4 — Dashboard Shell
+
+- Sidebar
+- Header
+- Tenant switcher
+
+## Phase 5 — Inventory Module
+
+- Inventory CRUD
+- Search and filtering
+- Low stock alerts
+
+## Phase 6 — Warehouse Module
+
+- Warehouses
+- Stock locations
+- Bin tracking
+
+## Phase 7 — Operations
+
+- Receiving
+- Purchase orders
+- Picking
+- Shipping
+
+## Phase 8 — Team and Settings
+
+- User invitations
+- Roles
+- Tenant settings
+
+## Phase 9 — Polish
+
+- Responsive UI
+- Loading states
+- Error handling
+- Activity logs
+
+# Claude Instructions
+
+1. Use server components by default.
+2. Scope every query by tenantId.
+3. Never expose tenant data across tenants.
+4. Use Zod validation everywhere.
+5. Use React Hook Form with zodResolver.
+6. Use Shadcn UI components.
+7. Prefer server actions.
+8. Add authorization checks to every mutation.
+
+# First Build Task
+
+Create:
+
+- Prisma schema
+- Better Auth setup
+- Dashboard layout
+- Tenant-aware route protection
+- Inventory item model
+- Inventory list page
+- Create inventory item form
